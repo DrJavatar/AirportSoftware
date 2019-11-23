@@ -21,4 +21,24 @@ public final class Airplane {
         this.passangers = new ArrayList<>();
         this.employees = new ArrayList<>();
     }
+
+    public int getPlaneId() {
+        return planeId;
+    }
+
+    public List<Person> getPassangers() {
+        return passangers;
+    }
+
+    public List<Person> getEmployees() {
+        return employees;
+    }
+
+    public Person getPilot() {
+        return pilot;
+    }
+
+    public Person getCoPilot() {
+        return coPilot;
+    }
 }

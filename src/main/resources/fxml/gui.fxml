@@ -21,8 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="572.0" prefWidth="512.0" styleClass="base" stylesheets="@../css/app.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="572.0" prefWidth="512.0" styleClass="base" stylesheets="@../css/app.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.controller.AppController">
    <children>
       <BorderPane prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -52,7 +51,7 @@
                                  <children>
                                     <HBox prefHeight="310.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <VBox alignment="CENTER" prefHeight="310.0" prefWidth="267.0" spacing="10.0">
+                                          <VBox alignment="CENTER" prefHeight="310.0" prefWidth="373.0" spacing="10.0">
                                              <children>
                                                 <Label alignment="CENTER" prefHeight="21.0" prefWidth="239.0" text="Departure">
                                                    <font>
@@ -197,12 +196,12 @@
          <bottom>
             <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <TableView prefHeight="200.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TableView fx:id="aircraftTable" prefHeight="200.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                      <TableColumn prefWidth="117.0" text="Aircraft" />
-                      <TableColumn prefWidth="126.0" text="Airport Code" />
-                        <TableColumn prefWidth="162.0" text="Airport Code Dest" />
-                        <TableColumn prefWidth="97.0" text="Pass Count" />
+                      <TableColumn fx:id="aircraftCol" prefWidth="117.0" text="Aircraft" />
+                      <TableColumn fx:id="airportCode" prefWidth="126.0" text="Airport Code" />
+                        <TableColumn fx:id="airportCodeDest" prefWidth="162.0" text="Airport Code Dest" />
+                        <TableColumn fx:id="passCount" prefWidth="97.0" text="Pass Count" />
                     </columns>
                   </TableView>
                </children>

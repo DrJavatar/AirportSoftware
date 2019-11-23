@@ -1,8 +1,10 @@
 package org.sql;
 
+import java.sql.SQLException;
+
 @FunctionalInterface
 public interface SQLCallback<T> {
 
-    T call();
+    T call() throws SQLException;
 
 }
