@@ -24,6 +24,4 @@ public abstract class Person {
         return socialNumber;
     }
 
-    public abstract boolean updateDatabase();
-
 }
