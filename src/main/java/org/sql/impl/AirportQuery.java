@@ -22,6 +22,7 @@ public class AirportQuery implements SQLCallback<Airport> {
             airports.add(new Airport(resultSet.getString("airport_code")));
         }
 
+        con.close();
         return airports;
     }
 }

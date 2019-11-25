@@ -23,7 +23,7 @@ public class Airport {
     public Optional<Flight> launchFlight(Airplane airplane, String airport_code, String airport_code_dest) {
         if(this.planes.containsKey(airplane.getPlaneId())) {
             this.flights.put(airplane, new Flight(airplane, airport_code, airport_code_dest));
-            return Optional.of(this.flights.get(airplane));
+            return Optional.ofNullable(this.flights.get(airplane));
         }
         return Optional.empty();
     }
