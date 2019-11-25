@@ -17,13 +17,12 @@ public class SQLManager {
     private SQLManager() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("ip", "user", "pass");
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public Connection getConnection() {
-        return connection;
+    public Connection createConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/airpots", "root", "Super130376!");
     }
 }
