@@ -26,7 +26,10 @@ CREATE TABLE `Aircraft` (
   `aircrafttype` char(3) NOT NULL,
   `adescription` varchar(40) DEFAULT NULL,
   `noseats` smallint(6) DEFAULT NULL,
-  PRIMARY KEY (`aircrafttype`)
+  `home_airport_code` char(3) DEFAULT NULL,
+  PRIMARY KEY (`aircrafttype`),
+  KEY `Aircraft_home_airport_code_fk` (`home_airport_code`),
+  CONSTRAINT `Aircraft_home_airport_code_fk` FOREIGN KEY (`home_airport_code`) REFERENCES `AirportCode` (`airport_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -36,7 +39,7 @@ CREATE TABLE `Aircraft` (
 
 LOCK TABLES `Aircraft` WRITE;
 /*!40000 ALTER TABLE `Aircraft` DISABLE KEYS */;
-INSERT INTO `Aircraft` VALUES ('737','Boeing 737-300 Jet',300),('ATP','Advanced Turbo Prop',48),('DC9','McDonnel Douglas Jet',120);
+INSERT INTO `Aircraft` VALUES ('737','Boeing 737-300 Jet',300,'YVR'),('ATP','Advanced Turbo Prop',48,'YYZ'),('DC9','McDonnel Douglas Jet',120,'YUL');
 /*!40000 ALTER TABLE `Aircraft` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,4 +154,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-25  1:19:20
+-- Dump completed on 2019-11-25  4:04:08
