@@ -13,10 +13,7 @@ import org.controller.table.StringCellFactory;
 import org.people.Person;
 import org.people.impl.Employee;
 import org.people.impl.Passenger;
-import org.sql.impl.AircraftQuery;
-import org.sql.impl.AirportQuery;
-import org.sql.impl.PassengerQuery;
-import org.sql.impl.StaffQuery;
+import org.sql.impl.*;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -46,6 +43,18 @@ public class AppController implements Initializable {
     @FXML
     private ChoiceBox<ViewType> personType;
 
+    @FXML
+    private TextField firstNameField;
+
+    @FXML
+    private TextField lastNameField;
+
+    @FXML
+    private TextField phoneField;
+
+    @FXML
+    private TextField addressField;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         aircraftCol.setCellFactory(new StringCellFactory());
@@ -64,41 +73,11 @@ public class AppController implements Initializable {
         }
 
         personType.getSelectionModel().selectedItemProperty().addListener((observableValue, viewType, t1) -> {
-            switch (t1) {
-                case ALL:
-                    try {
-                        aircraftTable.getSelectionModel().clearSelection();
-                        List<Passenger> passengers = new PassengerQuery().call();
-                        List<Employee> employees = new StaffQuery().call();
-                        List<Person> persons = new ArrayList<>();
-                        persons.addAll(passengers);
-                        persons.addAll(employees);
-                        personList.getItems().setAll(persons);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case EMPLOYEES:
-                    try {
-                        aircraftTable.getSelectionModel().clearSelection();
-                        personList.getItems().setAll(new StaffQuery().call());
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case PASSENGERS:
-                    try {
-                        aircraftTable.getSelectionModel().clearSelection();
-                        personList.getItems().setAll(new PassengerQuery().call());
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-            }
+            setPersonList(t1);
         });
 
         aircraftTable.getSelectionModel().selectedItemProperty().addListener((observableValue, airplane, t1) -> {
-            if(t1 != null) {
+            if (t1 != null) {
                 personType.setValue(ViewType.AIRCRAFT_LIST);
             } else {
                 return;
@@ -107,7 +86,7 @@ public class AppController implements Initializable {
             List<Person> persons = new ArrayList<>();
             persons.addAll(t1.getEmployees());
             persons.addAll(t1.getPassangers());
-            if(!persons.isEmpty()) {
+            if (!persons.isEmpty()) {
                 personList.getItems().setAll(persons);
             }
         });
@@ -125,6 +104,95 @@ public class AppController implements Initializable {
                 return new SimpleStringProperty("Not in flight");
             }
         });
+
+        personList.getSelectionModel().selectedItemProperty().addListener((observableValue, person, t1) -> {
+            if (t1 != null) {
+                firstNameField.setText(t1.getFirstName());
+                lastNameField.setText(t1.getLastName());
+                if(t1 instanceof Passenger) {
+                    phoneField.setDisable(false);
+                    addressField.setDisable(false);
+                    phoneField.setText(((Passenger) t1).getPhone());
+                    addressField.setText(((Passenger) t1).getAddress());
+                } else {
+                    phoneField.setText("");
+                    addressField.setText("");
+                    phoneField.setDisable(true);
+                    addressField.setDisable(true);
+                }
+            }
+        });
+
+        searchPersons.textProperty().addListener((observableValue, s, t1) -> {
+            if(t1.isEmpty()) {
+                personList.getItems().clear();
+                setPersonList(personType.getValue());
+            }
+        });
+        searchPersons.setOnAction(actionEvent -> {
+            try {
+                ViewType type = personType.getValue();
+                switch (type) {
+
+                    case PASSENGERS:
+                        List<Passenger> passengers = new PassengerSearchQuery(searchPersons.getText()).call();
+                        aircraftTable.getSelectionModel().clearSelection();
+                        personList.getItems().setAll(passengers);
+                        break;
+                    case EMPLOYEES:
+                        List<Employee> employees = new StaffSearchQuery(searchPersons.getText()).call();
+                        aircraftTable.getSelectionModel().clearSelection();
+                        personList.getItems().setAll(employees);
+                        break;
+                    case ALL:
+                        List<Person> persons = new ArrayList<>();
+                        persons.addAll(new PassengerSearchQuery(searchPersons.getText()).call());
+                        persons.addAll(new StaffSearchQuery(searchPersons.getText()).call());
+                        aircraftTable.getSelectionModel().clearSelection();
+                        personList.getItems().setAll(persons);
+                        break;
+
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
+    private void setPersonList(ViewType t1) {
+        switch (t1) {
+            case ALL:
+                try {
+                    aircraftTable.getSelectionModel().clearSelection();
+                    List<Passenger> passengers = new PassengerQuery().call();
+                    List<Employee> employees = new StaffQuery().call();
+                    List<Person> persons = new ArrayList<>();
+                    persons.addAll(passengers);
+                    persons.addAll(employees);
+                    personList.getItems().setAll(persons);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case EMPLOYEES:
+                try {
+                    aircraftTable.getSelectionModel().clearSelection();
+                    personList.getItems().setAll(new StaffQuery().call());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case PASSENGERS:
+                try {
+                    aircraftTable.getSelectionModel().clearSelection();
+                    personList.getItems().setAll(new PassengerQuery().call());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
     }
 
     @FXML

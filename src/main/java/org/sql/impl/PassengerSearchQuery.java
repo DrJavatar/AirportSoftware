@@ -5,6 +5,7 @@ import org.sql.SQLCallback;
 import org.sql.SQLManager;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +28,9 @@ public class PassengerSearchQuery implements SQLCallback<Passenger> {
             ResultSet resultSet = con.prepareStatement("SELECT * FROM Passenger WHERE pid = " + pid + ";").executeQuery();
             addPass(passengers, resultSet);
         } catch (NumberFormatException e) {
-            ResultSet resultSet = con.prepareStatement("SELECT * FROM Passenger WHERE LOWER(CONCAT(IFNULL(name, ''), IFNULL(address, ''), IFNULL(telno, ''))) LIKE LOWER(%" + searchText + "%);").executeQuery();
+            PreparedStatement stat = con.prepareStatement("SELECT * FROM Passenger WHERE LOWER(CONCAT(IFNULL(name, ''), IFNULL(address, ''), IFNULL(telno, ''))) LIKE LOWER(?);");
+            stat.setString(1, "%" + searchText + "%");
+            ResultSet resultSet = stat.executeQuery();
             addPass(passengers, resultSet);
         }
         con.close();
