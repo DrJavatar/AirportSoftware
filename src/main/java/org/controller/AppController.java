@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import org.airport.Airplane;
 import org.airport.Airport;
 import org.airport.Flight;
@@ -13,8 +14,11 @@ import org.controller.table.StringCellFactory;
 import org.people.Person;
 import org.people.impl.Employee;
 import org.people.impl.Passenger;
+import org.sql.SQLConnectionConfig;
 import org.sql.impl.*;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
@@ -55,6 +59,24 @@ public class AppController implements Initializable {
     @FXML
     private TextField addressField;
 
+    @FXML
+    private TextField sqlHost;
+
+    @FXML
+    private TextField sqlUser;
+
+    @FXML
+    private PasswordField sqlPass;
+
+    @FXML
+    private CheckBox rememberMe;
+
+    @FXML
+    private Spinner<Integer> sqlPort;
+
+    @FXML
+    private Label conLabel;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         aircraftCol.setCellFactory(new StringCellFactory());
@@ -62,6 +84,13 @@ public class AppController implements Initializable {
         airportCodeDest.setCellFactory(new StringCellFactory());
         passCount.setCellFactory(new StringCellFactory());
         personList.setCellFactory(new PersonListCell());
+        sqlPort.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
+        conLabel.setText("Not tested.");
+        conLabel.setTextFill(Color.BLACK);
+        sqlHost.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getHost());
+        sqlUser.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getUser());
+        sqlPass.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getPass());
+        sqlPort.getValueFactory().setValue(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getPort());
         try {
             personType.getItems().setAll(ViewType.values());
             List<Airport> airports = new AirportQuery().call();
@@ -192,6 +221,39 @@ public class AppController implements Initializable {
                     e.printStackTrace();
                 }
                 break;
+        }
+    }
+
+    @FXML
+    private void testConnection() {
+        try {
+            new Socket(sqlHost.getText(), sqlPort.getValue()).close();
+            conLabel.setText("Connection successful");
+            conLabel.setTextFill(Color.GREEN);
+        } catch (IOException e) {
+            conLabel.setText("Connection Failed");
+            conLabel.setTextFill(Color.RED);
+        }
+    }
+
+    @FXML
+    private void updateSQLConfig() {
+        SQLConnectionConfig config = SQLConnectionConfig.SQL_CONNECTION_CONFIG;
+        if (!sqlHost.getText().equals(config.getHost()) && !sqlHost.getText().isEmpty()) {
+            config.setHost(sqlHost.getText());
+        }
+        if(!sqlUser.getText().equals(config.getUser()) && !sqlUser.getText().isEmpty()) {
+            config.setUser(sqlUser.getText());
+        }
+        if(!sqlPass.getText().equals(config.getPass()) && !sqlPass.getText().isEmpty()) {
+            config.setPass(sqlPass.getText());
+        }
+        if(sqlPort.getValue() != config.getPort()) {
+            int port = sqlPort.getValue();
+            if(port <= 1023) {
+                port = 3306;
+            }
+            config.setPort(port);
         }
     }
 

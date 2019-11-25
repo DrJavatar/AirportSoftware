@@ -4,15 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLManager {
+public final class SQLManager {
 
     private static final SQLManager sqlManager = new SQLManager();
 
     public static SQLManager getSqlManager() {
         return sqlManager;
     }
-
-    private Connection connection;
 
     private SQLManager() {
         try {
@@ -23,6 +21,7 @@ public class SQLManager {
     }
 
     public Connection createConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/airpots", "root", "Super130376!");
+        SQLConnectionConfig config = SQLConnectionConfig.SQL_CONNECTION_CONFIG;
+        return DriverManager.getConnection("jdbc:mysql://" + config.getHost() + ":3306/airpots", config.getUser(), config.getPass());
     }
 }
