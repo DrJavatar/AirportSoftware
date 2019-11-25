@@ -1,8 +1,9 @@
 package org.people.impl;
 
 import org.people.EmployeeRole;
+import org.people.Person;
 
-public class Employee extends Passenger {
+public class Employee extends Person {
 
     private EmployeeRole role;
 

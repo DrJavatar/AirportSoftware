@@ -24,7 +24,7 @@ public class StaffQuery implements SQLCallback<Employee> {
             String lastName = resultSet.getString("lastName");
             String role = resultSet.getString("role");
             int id = resultSet.getInt("id");
-            employees.add(new Employee(firstName, lastName, id, EmployeeRole.valueOf(role.toUpperCase())));
+            employees.add(new Employee(firstName, lastName, id, EmployeeRole.valueOf(role.toUpperCase().replace("-", "_"))));
         }
 
         con.close();
