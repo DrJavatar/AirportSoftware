@@ -1,5 +1,7 @@
 package org.sql.impl;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.people.EmployeeRole;
 import org.people.impl.Employee;
 import org.sql.SQLCallback;
@@ -21,7 +23,7 @@ public class StaffSearchQuery implements SQLCallback<Employee> {
     }
 
     @Override
-    public List<Employee> call() throws SQLException {
+    public ObservableList<Employee> call() throws SQLException {
         List<Employee> employees = new ArrayList<>();
         Connection con = SQLManager.getSqlManager().createConnection();
         try {
@@ -35,7 +37,7 @@ public class StaffSearchQuery implements SQLCallback<Employee> {
             addPass(employees, resultSet);
         }
         con.close();
-        return employees;
+        return FXCollections.observableArrayList(employees);
     }
 
     private void addPass(List<Employee> employees, ResultSet resultSet) throws SQLException {
@@ -44,7 +46,10 @@ public class StaffSearchQuery implements SQLCallback<Employee> {
             String firstName = resultSet.getString("firstName");
             String lastName = resultSet.getString("lastName");
             String role = resultSet.getString("role");
-            employees.add(new Employee(firstName, lastName, pid, EmployeeRole.valueOf(role.toUpperCase())));
+            int flight_no = resultSet.getInt("flight_no");
+            Employee employee = new Employee(firstName, lastName, pid, EmployeeRole.valueOf(role.toUpperCase()));
+            employee.setFlightNumber(flight_no);
+            employees.add(employee);
         }
     }
 }

@@ -2,7 +2,7 @@ package org.people.impl;
 
 import org.people.Person;
 
-public class Passenger extends Person {
+public final class Passenger extends Person {
 
     private String address;
     private String phone;

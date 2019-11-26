@@ -13,14 +13,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaffQuery implements SQLCallback<Employee> {
+public class NegatedPilotFilterQuery implements SQLCallback<Employee> {
     @Override
     public ObservableList<Employee> call() throws SQLException {
-        List<Employee> employees = new ArrayList<>();
         Connection con = SQLManager.getSqlManager().createConnection();
 
-        ResultSet resultSet = con.prepareStatement("SELECT * FROM Staff;").executeQuery();
-
+        ResultSet resultSet = con.prepareStatement("SELECT * FROM Staff WHERE role != 'pilot'").executeQuery();
+        List<Employee> employees = new ArrayList<>();
         while (resultSet.next()) {
             String firstName = resultSet.getString("firstName");
             String lastName = resultSet.getString("lastName");

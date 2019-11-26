@@ -1,5 +1,7 @@
 package org.sql.impl;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.airport.Airport;
 import org.sql.SQLCallback;
 import org.sql.SQLManager;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public class AirportQuery implements SQLCallback<Airport> {
     @Override
-    public List<Airport> call() throws SQLException {
+    public ObservableList<Airport> call() throws SQLException {
         List<Airport> airports = new ArrayList<>();
         Connection con = SQLManager.getSqlManager().createConnection();
 
@@ -23,6 +25,6 @@ public class AirportQuery implements SQLCallback<Airport> {
         }
 
         con.close();
-        return airports;
+        return FXCollections.observableArrayList(airports);
     }
 }

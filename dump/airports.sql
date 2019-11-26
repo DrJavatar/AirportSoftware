@@ -87,7 +87,7 @@ CREATE TABLE `Flights` (
   CONSTRAINT `Flights_aircraft_type_fk` FOREIGN KEY (`aircraft_type`) REFERENCES `Aircraft` (`aircrafttype`),
   CONSTRAINT `Flights_pilot_id_fk` FOREIGN KEY (`co_pilot_id`) REFERENCES `Staff` (`id`),
   CONSTRAINT `Flights_pilot_no_fk` FOREIGN KEY (`pilot_id`) REFERENCES `Staff` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,6 +96,7 @@ CREATE TABLE `Flights` (
 
 LOCK TABLES `Flights` WRITE;
 /*!40000 ALTER TABLE `Flights` DISABLE KEYS */;
+INSERT INTO `Flights` VALUES (6,'DC9','YUL','YYC',0,1);
 /*!40000 ALTER TABLE `Flights` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -114,7 +115,7 @@ CREATE TABLE `Passenger` (
   `flight_no` int(11) DEFAULT NULL,
   PRIMARY KEY (`pid`),
   KEY `Passenger_flight_no_fk` (`flight_no`),
-  CONSTRAINT `Passenger_flight_no_fk` FOREIGN KEY (`flight_no`) REFERENCES `Flights` (`flight_id`)
+  CONSTRAINT `Passenger_flight_no_fk` FOREIGN KEY (`flight_no`) REFERENCES `Flights` (`flight_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -124,7 +125,7 @@ CREATE TABLE `Passenger` (
 
 LOCK TABLES `Passenger` WRITE;
 /*!40000 ALTER TABLE `Passenger` DISABLE KEYS */;
-INSERT INTO `Passenger` VALUES (10,'D N Hamer','1 St Pauls Churchyard','',NULL),(20,'D E Avison','5 Chancery Lane','',NULL),(21,'G B Davis','25 Allenby Road','',NULL),(24,'C Evans','63 Kew Green','',NULL),(26,'J Millar','Englewood Cliffs','061 343 881',NULL),(28,'J D Ullman','1 Microsoft Way','',NULL),(29,'A Smithson','16 Bedford St','071 577 890',NULL),(30,'D Etheridge','4 Maylands Avenue','',NULL),(34,'E Simon','8 Cherry Street','',NULL),(90,'A N Smith','81 Digby Crescent','071 321 456',NULL),(91,'T Pittman','The Little House','',NULL),(92,'J Peters','31 Lucas Road','',NULL),(93,'K E Kendall','11 Rosedale Avenue','',NULL),(94,'R Miller','155 Kingston Road','0638 1100',NULL);
+INSERT INTO `Passenger` VALUES (10,'D Hamer','1 St Pauls Churchyard','',NULL),(20,'D Avison','5 Chancery Lane','',NULL),(21,'G Davis','25 Allenby Road','',6),(24,'C Evans','63 Kew Green','',6),(26,'J Millar','Englewood Cliffs','061 343 881',6),(28,'J Ullman','1 Microsoft Way','',NULL),(29,'A Smithson','16 Bedford St','071 577 890',NULL),(30,'D Etheridge','4 Maylands Avenue','',NULL),(34,'E Simon','8 Cherry Street','',NULL),(90,'A Smith','81 Digby Crescent','071 321 456',NULL),(91,'T Pittman','The Little House','',NULL),(92,'J Peters','31 Lucas Road','',NULL),(93,'K Kendall','11 Rosedale Avenue','',NULL),(94,'R Miller','155 Kingston Road','0638 1100',NULL);
 /*!40000 ALTER TABLE `Passenger` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,7 +141,10 @@ CREATE TABLE `Staff` (
   `firstName` varchar(4000) NOT NULL,
   `lastName` varchar(4000) NOT NULL,
   `role` varchar(4000) NOT NULL,
-  PRIMARY KEY (`id`)
+  `flight_no` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Staff_flight_no_fk` (`flight_no`),
+  CONSTRAINT `Staff_flight_no_fk` FOREIGN KEY (`flight_no`) REFERENCES `Flights` (`flight_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -150,7 +154,7 @@ CREATE TABLE `Staff` (
 
 LOCK TABLES `Staff` WRITE;
 /*!40000 ALTER TABLE `Staff` DISABLE KEYS */;
-INSERT INTO `Staff` VALUES (0,'tim','jones','pilot'),(1,'mark','adams','co-pilot'),(2,'arthur','smith','attendant'),(3,'lisa','ant','attendant'),(4,'jenny','michaels','pilot'),(5,'sarah','silver','attendant'),(6,'brent','jefferies','attendant'),(7,'mike','reynolds','pilot'),(8,'evan','young','co-pilot'),(9,'morgan','moss','attendant'),(10,'brandy','samson','attendant'),(11,'alicia','key','pilot'),(12,'alex','liv','co-pilot'),(13,'greta','micha','attendant'),(14,'steve','rode','attendant');
+INSERT INTO `Staff` VALUES (0,'tim','jones','pilot',6),(1,'mark','adams','pilot',6),(2,'arthur','smith','attendant',NULL),(3,'lisa','ant','attendant',NULL),(4,'jenny','michaels','pilot',NULL),(5,'sarah','silver','attendant',NULL),(6,'brent','jefferies','attendant',NULL),(7,'mike','reynolds','pilot',NULL),(8,'evan','young','pilot',NULL),(9,'morgan','moss','attendant',NULL),(10,'brandy','samson','attendant',NULL),(11,'alicia','key','pilot',NULL),(12,'alex','liv','pilot',NULL),(13,'greta','micha','attendant',NULL),(14,'steve','rode','attendant',NULL);
 /*!40000 ALTER TABLE `Staff` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,4 +171,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-25 17:51:22
+-- Dump completed on 2019-11-26  2:30:45

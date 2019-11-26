@@ -1,8 +1,8 @@
 package org.controller;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -13,6 +13,7 @@ import org.airport.Flight;
 import org.controller.choiceboxes.ViewType;
 import org.controller.listviews.PersonListCell;
 import org.controller.table.ChoiceBoxCellFactory;
+import org.controller.table.PassCountCellFactory;
 import org.controller.table.StringCellFactory;
 import org.people.Person;
 import org.people.impl.Employee;
@@ -84,9 +85,21 @@ public class AppController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             personType.getItems().setAll(ViewType.values());
-            List<Airport> airports = new AirportQuery().call();
+            ObservableList<Airport> airports = new AirportQuery().call();
             airports.forEach(airport -> AIRPORTS.put(airport.getCode(), airport));
-            List<Airplane> list = new AircraftQuery().call();
+            ObservableList<Airplane> list = new AircraftQuery().call();
+            ObservableList<Passenger> passengers = new PassengerQuery().call();
+            ObservableList<Employee> employees = new StaffQuery().call();
+            ObservableList<Person> persons = FXCollections.observableArrayList();
+            persons.addAll(passengers);
+            persons.addAll(employees);
+            list.forEach(airplane -> {
+                if(AIRPORTS.containsKey(airplane.getHomeAirportCode())) {
+                    Airport airport = AIRPORTS.get(airplane.getHomeAirportCode());
+                    airport.registerAircraft(airplane);
+                }
+            });
+            new FlightQuery().call();
             aircraftTable.getItems().setAll(list);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,7 +107,7 @@ public class AppController implements Initializable {
         aircraftCol.setCellFactory(new StringCellFactory());
         airportCode.setCellFactory(new StringCellFactory());
         airportCodeDest.setCellFactory(new ChoiceBoxCellFactory());
-        passCount.setCellFactory(new StringCellFactory());
+        passCount.setCellFactory(new PassCountCellFactory());
         personList.setCellFactory(new PersonListCell());
         sqlPort.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
         conLabel.setText("Not tested.");
@@ -116,7 +129,7 @@ public class AppController implements Initializable {
             personList.getItems().clear();
             List<Person> persons = new ArrayList<>();
             persons.addAll(t1.getEmployees());
-            persons.addAll(t1.getPassangers());
+            persons.addAll(t1.getPassengers());
             if (!persons.isEmpty()) {
                 personList.getItems().setAll(persons);
             }
@@ -124,6 +137,7 @@ public class AppController implements Initializable {
 
         aircraftCol.setCellValueFactory(ascdf -> new SimpleStringProperty(ascdf.getValue().getPlaneId()));
         airportCode.setCellValueFactory(ascdf -> new SimpleStringProperty(ascdf.getValue().getHomeAirportCode()));
+        passCount.setCellValueFactory(ascdf -> new SimpleStringProperty(String.valueOf((ascdf.getValue().getEmployees().size() + ascdf.getValue().getPassengers().size()))));
         airportCodeDest.setCellValueFactory(ascdf -> {
             final Airplane plane = ascdf.getValue();
             Airport airport = AIRPORTS.get(plane.getHomeAirportCode());
@@ -189,6 +203,8 @@ public class AppController implements Initializable {
                 e.printStackTrace();
             }
         });
+        personType.setValue(ViewType.ALL);
+
     }
 
     private void setPersonList(ViewType t1) {
