@@ -15,4 +15,8 @@ public class Employee extends Person {
     public EmployeeRole getRole() {
         return role;
     }
+
+    public void setRole(EmployeeRole role) {
+        this.role = role;
+    }
 }

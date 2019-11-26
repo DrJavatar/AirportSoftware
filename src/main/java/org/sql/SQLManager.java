@@ -22,6 +22,6 @@ public final class SQLManager {
 
     public Connection createConnection() throws SQLException {
         SQLConnectionConfig config = SQLConnectionConfig.SQL_CONNECTION_CONFIG;
-        return DriverManager.getConnection("jdbc:mysql://" + config.getHost() + ":3306/airpots", config.getUser(), config.getPass());
+        return DriverManager.getConnection("jdbc:mysql://" + config.getHost() + ":" + SQLConnectionConfig.SQL_CONNECTION_CONFIG.getPort() + "/airpots", config.getUser(), config.getPass());
     }
 }

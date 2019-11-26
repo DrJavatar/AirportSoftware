@@ -20,7 +20,7 @@ jar {
 }
 
 task dumpSQL(type: Exec) {
-    commandLine("mysqldump", "airpots", "--result-file=./dump/airports.sql", "--user=root", "--password=Super130376!", "--host=127.0.0.1", "--port=3306")
+    commandLine("mysqldump", "airpots", "--routines", "--result-file=./dump/airports.sql", "--user=root", "--password=Super130376!", "--host=127.0.0.1", "--port=3306")
 }
 
 repositories {

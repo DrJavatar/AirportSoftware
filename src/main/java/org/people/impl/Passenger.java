@@ -20,4 +20,12 @@ public class Passenger extends Person {
     public String getPhone() {
         return phone;
     }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }

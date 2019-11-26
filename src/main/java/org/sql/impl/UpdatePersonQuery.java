@@ -8,6 +8,7 @@ import org.sql.SQLManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,15 @@ public class UpdatePersonQuery implements SQLCallback<Person> {
         List<Person> persons = new ArrayList<>();
         Connection con = SQLManager.getSqlManager().createConnection();
 
+
         for(Person p : people) {
             if(p instanceof Employee) {
+                ResultSet resultSet = con.prepareStatement("SELECT COUNT(*) FROM Staff;").executeQuery();
+
+                if(resultSet.next() && p.getSocialNumber() == -1) {
+                    p.setSocialNumber(resultSet.getInt(1) + 1);
+                }
+
                 PreparedStatement stat = con.prepareStatement("INSERT INTO Staff (id, firstName, lastName, role) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE firstName = ?, lastName = ?, role = ?;");
                 stat.setInt(1, p.getSocialNumber());
                 stat.setString(2, p.getFirstName());
@@ -37,6 +45,10 @@ public class UpdatePersonQuery implements SQLCallback<Person> {
                 stat.setString(7, ((Employee) p).getRole().name().toLowerCase());
                 stat.executeUpdate();
             } else if(p instanceof Passenger) {
+                ResultSet resultSet = con.prepareStatement("SELECT COUNT(*) FROM Passenger;").executeQuery();
+                if(resultSet.next() && p.getSocialNumber() == -1) {
+                    p.setSocialNumber(resultSet.getInt(1) + 1);
+                }
                 PreparedStatement stat = con.prepareStatement("INSERT INTO Passenger (pid, name, address, telno) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, address = ?, telno = ?;");
                 stat.setInt(1, p.getSocialNumber());
                 String name = p.getFirstName() + " " + p.getLastName();

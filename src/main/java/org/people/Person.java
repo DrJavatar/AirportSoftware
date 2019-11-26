@@ -24,4 +24,15 @@ public abstract class Person {
         return socialNumber;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setSocialNumber(int socialNumber) {
+        this.socialNumber = socialNumber;
+    }
 }

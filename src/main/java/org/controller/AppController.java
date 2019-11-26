@@ -1,6 +1,8 @@
 package org.controller;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -10,6 +12,7 @@ import org.airport.Airport;
 import org.airport.Flight;
 import org.controller.choiceboxes.ViewType;
 import org.controller.listviews.PersonListCell;
+import org.controller.table.ChoiceBoxCellFactory;
 import org.controller.table.StringCellFactory;
 import org.people.Person;
 import org.people.impl.Employee;
@@ -79,18 +82,6 @@ public class AppController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        aircraftCol.setCellFactory(new StringCellFactory());
-        airportCode.setCellFactory(new StringCellFactory());
-        airportCodeDest.setCellFactory(new StringCellFactory());
-        passCount.setCellFactory(new StringCellFactory());
-        personList.setCellFactory(new PersonListCell());
-        sqlPort.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
-        conLabel.setText("Not tested.");
-        conLabel.setTextFill(Color.BLACK);
-        sqlHost.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getHost());
-        sqlUser.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getUser());
-        sqlPass.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getPass());
-        sqlPort.getValueFactory().setValue(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getPort());
         try {
             personType.getItems().setAll(ViewType.values());
             List<Airport> airports = new AirportQuery().call();
@@ -100,7 +91,18 @@ public class AppController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        aircraftCol.setCellFactory(new StringCellFactory());
+        airportCode.setCellFactory(new StringCellFactory());
+        airportCodeDest.setCellFactory(new ChoiceBoxCellFactory());
+        passCount.setCellFactory(new StringCellFactory());
+        personList.setCellFactory(new PersonListCell());
+        sqlPort.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 65535));
+        conLabel.setText("Not tested.");
+        conLabel.setTextFill(Color.BLACK);
+        sqlHost.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getHost());
+        sqlUser.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getUser());
+        sqlPass.setText(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getPass());
+        sqlPort.getValueFactory().setValue(SQLConnectionConfig.SQL_CONNECTION_CONFIG.getPort());
         personType.getSelectionModel().selectedItemProperty().addListener((observableValue, viewType, t1) -> {
             setPersonList(t1);
         });
@@ -187,7 +189,6 @@ public class AppController implements Initializable {
                 e.printStackTrace();
             }
         });
-
     }
 
     private void setPersonList(ViewType t1) {
@@ -259,8 +260,25 @@ public class AppController implements Initializable {
 
     @FXML
     private void updatePerson() {
-
-
+        try {
+            Person person = personList.getSelectionModel().getSelectedItem();
+            if (person != null) {
+                person.setFirstName(firstNameField.getText());
+                person.setLastName(lastNameField.getText());
+                if(person instanceof Passenger) {
+                    ((Passenger) person).setPhone(phoneField.getText());
+                    ((Passenger) person).setAddress(addressField.getText());
+                }
+            } else {
+                Passenger passenger = new Passenger(firstNameField.getText(), lastNameField.getText(), -1, addressField.getText(), phoneField.getText());
+                new UpdatePersonQuery(passenger).call();
+                return;
+            }
+            new UpdatePersonQuery(person).call();
+            personList.getSelectionModel().clearSelection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
